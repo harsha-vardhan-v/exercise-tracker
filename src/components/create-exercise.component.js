@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import axios from 'axios';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 
@@ -23,10 +24,16 @@ export default class CreateExercise extends Component{
     }
 
     componentDidMount() {
-        this.setState({
-            users: ['test user'],
-            username: 'test user'
-        });
+        axios.get('http://localhost:5000/user/')
+            .then(response => {
+                //If there is atleast on user in the database
+                if(response.data.length > 0) {
+                    this.setState({
+                        users: response.data.map(user => user.username),
+                        username: response.data[0].username
+                    });
+                }
+            })
     }
 
     onChangeUsername(e) {
@@ -63,6 +70,9 @@ export default class CreateExercise extends Component{
             date: this.state.date
         };
 
+        axios.post('http://localhost:5000/exercise/add', exercise)
+            .then(res => console.log(res.data));
+
         
         window.location = '/';
         console.log(exercise);
@@ -77,7 +87,8 @@ export default class CreateExercise extends Component{
                         <label>Username: </label>
                         <select ref = "userInput"
                             required
-                            className = {this.state.username}>
+                            className = {this.state.username}
+                            onChange = {this.onChangeUsername}>
                                 {
                                     this.state.users.map(function(user) {
                                         return <option
@@ -96,7 +107,7 @@ export default class CreateExercise extends Component{
                             required
                             className = "form-control"
                             defaultValue = {this.state.description}
-                            onChange = {this.state.onChangeDescription} />
+                            onChange = {this.onChangeDescription} />
                     </div>
 
                     <div className = "form-group">
@@ -107,7 +118,7 @@ export default class CreateExercise extends Component{
                             required
                             className = "form-control"
                             defaultValue = {this.state.duration}
-                            onChange = {this.state.onChangeDuration} />
+                            onChange = {this.onChangeDuration} />
                     </div>
 
                     <div className = "form-group">
