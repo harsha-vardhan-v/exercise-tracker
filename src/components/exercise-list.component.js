@@ -39,6 +39,7 @@ export default class ExerciseList extends Component {
             .catch(err => {
                 console.log(err);
             });
+            
     }
 
     deleteExercise(id) {
